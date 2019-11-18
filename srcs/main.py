@@ -1,13 +1,27 @@
 import sys
 import os.path
 from read_file_with_info import read_file
+from inference_engine import inf_engine
+
+def print_tree(rule, pos, deepth):
+    print(rule.value, pos, deepth)
+    if rule.left is not None:
+        print_tree(rule.left, "left", deepth + 1)
+    if rule.right is not None:
+        print_tree(rule.right, 'right', deepth + 1)
 
 def main():
-    rules, facts, queries = read_file()
+    inference_engine = read_file()
+    for key in inference_engine.rules.keys():
+        print(key)
+        for ele in inference_engine.rules[key]:
+            print_tree(ele, "center", 0)
+            print('\n')
+    inference_engine.execute()
 
 if __name__ == "__main__":
     ### check number argument, one argument must be present
-    if len(sys.argv) <= 1 or len(sys.argv) > 2:
+    if len(sys.argv) != 2:
         sys.exit("Missing file to analyse.\nUsage: pythonX.X example_input.txt")
     ### check if file exists
     if os.path.exists(sys.argv[1]) == False:

@@ -1,7 +1,4 @@
-import sys
-
-#OPERATOR = ('(', ')', '!', '+', '|', '^', '=>', '<=>')
-OPERATOR = ('+', '|', '^', '=>', '<=>') # tmp
+OPERATOR = ('(', ')', '!', '+', '|', '^', '=>', '<=>')
 
 def check_if_operator(line):
     for opera in OPERATOR:
