@@ -21,7 +21,7 @@ def atom_parser(stream):
     raise SyntaxError("Only upper case are accepted as operand")
 
 def not_parser(stream):
-    if stream[0] == '!':
+    if stream and stream[0] == '!':
         left, current = not_parser(stream[1:])
         return ast(stream[0], True, left, None), current + 1
     return atom_parser(stream)
