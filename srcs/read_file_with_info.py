@@ -23,30 +23,34 @@ def create_new_rule(from_rule, store, rule):
     tmp = copy.deepcopy(from_rule)
     tmp.right = rule
     if rule.value == '!':
-        store.append((rule.left.value, tmp))
+        i = rule
+        while (i.operator is True):
+            i = i.left
+        store.append((i.value, tmp))
     else:
         store.append((rule.value, tmp))
 
+def check_if_other_operator_is_present(rule):
+    if rule is None:
+        return False
+    if rule.left is not None and rule.left.operator is True and rule.value == '!':
+        return check_if_other_operator_is_present(rule.left)
+    if rule.operator is True and rule.value != '!':
+        return True
+    return False
+
 def extract_operands(rule, store, principale_rule):
     if rule.operator is True and rule.value == '|' or rule.value == '^':
-        raise SyntaxError("| and ^ can't be in conclusion of rule")
-    if rule.operator is True and rule.value == '!' and rule.left.operator is True:
+        raise SyntaxError("%c can't be in conclusion of rule" %rule.value)
+    if rule.operator is True and rule.value == '!' and\
+            check_if_other_operator_is_present(rule.left) is True:
         raise SyntaxError("In conclusion, after ! must be an operand")
     if rule.left is not None and rule.value != '!':
         extract_operands(rule.left, store, principale_rule)
     if rule.right is not None and rule.value != '!':
         extract_operands(rule.right, store, principale_rule)
-    if rule.operator is True and rule.value == '!':
+    if rule.operator is False or rule.value == '!':
         create_new_rule(principale_rule, store, rule)
-    elif rule.operator is False:
-        create_new_rule(principale_rule, store, rule)
-
-def print_tree(rule, pos, deepth):
-    print(rule.value, pos, deepth)
-    if rule.left is not None:
-        print_tree(rule.left, "left", deepth + 1)
-    if rule.right is not None:
-        print_tree(rule.right, 'right', deepth + 1)
 
 def format_rules(parsed, rules):
     if parsed[0].value == '<=>':
@@ -62,10 +66,10 @@ def format_rules(parsed, rules):
 
 def read_file():
     """
-    Read line by line file in sys.argv and delete space backslash n and backslash t. Split with
-    # and extract first ele
+    Read line by line file in sys.argv, delete space, backslash n and backslash t. Extract rules,
+    facts and queries and return inf_engine class which contains rules, facts and queries.
     params: None
-    return: engine --> class inf_engine conatain rules, facts, queries
+    return: engine --> class inf_engine contain rules, facts, queries
     """
     engine = inf_engine()
     with open(sys.argv[1], 'r') as fd:

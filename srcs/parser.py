@@ -3,8 +3,8 @@ class ast():
     def __init__(self, value, operator, left, right):
         self.value = value
         self.operator = operator
+        self.status = None
         self.checked = False
-        self.status = False
         self.left = left
         self.right = right
 

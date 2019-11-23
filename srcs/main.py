@@ -12,11 +12,11 @@ def print_tree(rule, pos, deepth):
 
 def main():
     inference_engine = read_file()
-    for key in inference_engine.rules.keys():
-        print(key)
-        for ele in inference_engine.rules[key]:
-            print_tree(ele, "center", 0)
-            print('\n')
+   # for key in inference_engine.rules.keys():
+   #     print(key)
+   #     for ele in inference_engine.rules[key]:
+   #         print_tree(ele, "center", 0)
+   #         print('\n')
     inference_engine.execute()
 
 if __name__ == "__main__":
@@ -30,3 +30,4 @@ if __name__ == "__main__":
     if os.path.isfile(sys.argv[1]) == False:
         sys.exit("%s isn't a file" %sys.argv[1])
     main()
+
