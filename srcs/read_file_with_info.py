@@ -64,6 +64,17 @@ def format_rules(parsed, rules):
             else:
                 rules[new_key[0]] = [new_key[1]]
 
+class increase_recursion():
+    def __init__(self, new_limit):
+        self.new_limit = new_limit
+        self.old_limit = sys.getrecursionlimit()
+
+    def __enter__(self):
+        sys.setrecursionlimit(self.new_limit)
+
+    def __exit__(self, type, value, tb):
+        sys.setrecursionlimit(self.old_limit)
+
 def read_file():
     """
     Read line by line file in sys.argv, delete space, backslash n and backslash t. Extract rules,
@@ -83,7 +94,8 @@ def read_file():
                 elif tmp[0] != '=' and tmp[0] != '?' and engine.queries is None and\
                         engine.facts is None:
                     try:
-                        format_rules([if_parser(tmp)], engine.rules)
+                        with increase_recursion(8000):
+                            format_rules([if_parser(tmp)], engine.rules)
                     except SyntaxError as to_print:
                         sys.stderr.write("SyntaxError: %s in %s" %(str(to_print), line))
                     except RecursionError:

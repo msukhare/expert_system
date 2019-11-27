@@ -1,52 +1,34 @@
 CYCLE = 2
 
 def not_op(left, right):
-    print("not op:", left)
     if left == CYCLE:
-        print("return CYCLe")
         return CYCLE
     if left is None:
-        print("return True")
         return True
-    print("return None")
     return None
 
 def and_op(left, right):
-    if left == CYCLE and right == CYCLE:
-        print("return Cycle")
+    if left == CYCLE or right == CYCLE:
         return CYCLE
-    print("and op:", left, right)
     if left is True and right is True:
-        print("return True")
         return True
-    print("return None")
     return None
 
 def or_op(left, right):
     if left == CYCLE and right == CYCLE:
-        print("return CYCLE")
         return CYCLE
-    print("or op", left, right)
     if left is True or right is True:
-        print("return True")
         return True
-    print("return None")
     return None
 
 def xor_op(left, right):
-    if left == CYCLE and right == CYCLE:
-        print("return CYCLE")
+    if left == CYCLE or right == CYCLE:
         return CYCLE
-    print("xor op:", left, right)
-    if (left is True and (right is None or right == CYCLE)) or ((left is None or left == CYCLE)\
-            and right is True):
-        print("return True")
+    if left is True and right is None or left is None and right is True:
         return True
-    print("return NONE")
     return None
 
 dictionnary_of_rules = {'!': not_op, '+': and_op, '|': or_op, '^': xor_op, '=>': None, '<=>': None}
-
 
 class InferenceError(Exception):
     def __init__(self, message):
@@ -95,7 +77,7 @@ class inf_engine():
                 raise InferenceError("(%c can't be True and False at the same time)" %querie)
             if ele.status is not None and ele.status != CYCLE:
                 state_before = ele.status
-            if ele.status == CYCLE and self.check_other_status(querie) is True:
+            elif ele.status == CYCLE and self.check_other_status(querie) is True:
                 cycle = True
         if cycle is True:
             return CYCLE
@@ -114,6 +96,7 @@ class inf_engine():
                     rule.status = self.compute_conclusion(rule.right) 
                 elif tmp == CYCLE:
                     rule.status = CYCLE
+                rule.checked = False #to delete
             else:
                 rule.status = CYCLE
         return self.get_final_status_querie(querie)

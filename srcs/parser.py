@@ -15,7 +15,7 @@ def atom_parser(stream):
         return ast(stream[0], False, None, None), 1
     if stream[0] == '(':
         right, current_r = xor_parser(stream[1:])
-        if current_r < len(stream) and stream[current_r + 1] == ')':
+        if current_r + 1 < len(stream) and stream[current_r + 1] == ')':
             return right, current_r + 2
         raise SyntaxError("Missing )")
     raise SyntaxError("Only upper case are accepted as operand")
@@ -56,4 +56,7 @@ def if_parser(stream):
     if not stream[current + 1:]:
         raise SyntaxError("Missing expression after assignation")
     right_part, current_r = xor_parser(stream[current + 1:])
+    if stream[current_r + current + 1:]:
+        raise SyntaxError("Unexcepted caractere at the end of file %s"\
+             %stream[current + current_r + 1])
     return ast(stream[current], True, left_part, right_part)
