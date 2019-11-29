@@ -3,7 +3,7 @@ CYCLE = 2
 def not_op(left, right):
     if left == CYCLE:
         return CYCLE
-    if left is None:
+    if left is None or left is False:
         return True
     return None
 
@@ -24,7 +24,8 @@ def or_op(left, right):
 def xor_op(left, right):
     if left == CYCLE or right == CYCLE:
         return CYCLE
-    if left is True and right is None or left is None and right is True:
+    if left is True and (right is None or right is False) or (left is None or left is False) and\
+        right is True:
         return True
     return None
 
@@ -102,6 +103,9 @@ class inf_engine():
         return self.get_final_status_querie(querie)
 
     def execute(self):
+        if self.queries is None:
+            print("missing querie add ?querie")
+            return
         for querie in self.queries[1:]:
             try:
                 state_querie = self.compute_state_querie(querie)
