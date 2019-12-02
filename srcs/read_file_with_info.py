@@ -4,13 +4,13 @@ from lexer import lexing_line
 from parser import if_parser
 from inference_engine import inf_engine
 
-def check_if_operator(line):
-    for opera in OPERATOR:
-        if line.startswith(opera):
-            return opera
-    return ""
-
 def swap_assignation(parsed):
+    """ This function is called if assignation is <=>, create two new AST
+        params:
+            parsed --> AST
+        return:
+            list --> [AST] or [AST, AST]
+    """
     parsed[0].value = '=>'
     sec_rule = copy.deepcopy(parsed[0])
     tmp = sec_rule.left
@@ -20,6 +20,14 @@ def swap_assignation(parsed):
     return parsed
 
 def create_new_rule(from_rule, store, rule):
+    """ Copy from rule to create new AST from rule, assigne equation to operand
+        params:
+            from_rule --> orignal rule, only left part stay
+            store --> dict of rules
+            rule --> from rule where extract operand
+        return:
+            None
+    """
     tmp = copy.deepcopy(from_rule)
     tmp.right = rule
     if rule.value == '!':
@@ -31,6 +39,13 @@ def create_new_rule(from_rule, store, rule):
         store.append((rule.value, tmp))
 
 def check_if_other_operator_is_present(rule):
+    """ Check if other operator is present in conclusion like | ^ or if get
+        operator after !
+        params:
+            rule --> AST node
+        return:
+            Boolean --> True if operator is present, False if all ok
+    """
     if rule is None:
         return False
     if rule.left is not None and rule.left.operator is True and rule.value == '!':
@@ -40,6 +55,14 @@ def check_if_other_operator_is_present(rule):
     return False
 
 def extract_operands(rule, store, principale_rule):
+    """ Extract operand at right of assignation and stock rule associate to operand 
+        params:
+            rule --> AST where extract operand
+            store --> dict of rules
+            principale_rule --> first node of AST
+        return:
+            None
+    """
     if rule.operator is True and rule.value == '|' or rule.value == '^':
         raise SyntaxError("%c can't be in conclusion of rule" %rule.value)
     if rule.operator is True and rule.value == '!' and\
@@ -53,6 +76,14 @@ def extract_operands(rule, store, principale_rule):
         create_new_rule(principale_rule, store, rule)
 
 def format_rules(parsed, rules):
+    """ Check if rule is <=>, if the double assignation create two new rule.
+        Create one rule by operand in conclusion
+        params:
+            parsed --> list of rules
+            rules --> dict where store new rules
+        return:
+            None
+    """
     if parsed[0].value == '<=>':
         parsed = swap_assignation(parsed)
     for ele in parsed:
@@ -65,31 +96,40 @@ def format_rules(parsed, rules):
                 rules[new_key[0]] = [new_key[1]]
 
 class increase_recursion():
+    """Increae number recursivity in stack"""
     def __init__(self, new_limit):
+        """ Constructor of class
+            params:
+                new_limit --> new number of maximum recursion
+        """
         self.new_limit = new_limit
         self.old_limit = sys.getrecursionlimit()
 
     def __enter__(self):
+        """ set new limit when using class """
         sys.setrecursionlimit(self.new_limit)
 
     def __exit__(self, type, value, tb):
+        """ set old limit when leave class """
         sys.setrecursionlimit(self.old_limit)
 
 def read_file():
     """
     Read line by line file in sys.argv, delete space, backslash n and backslash t. Extract rules,
     facts and queries and return inf_engine class which contains rules, facts and queries.
-    params: None
-    return: engine --> class inf_engine contain rules, facts, queries
+    params:
+
+    return:
+        engine --> class inf_engine contain rules, facts, queries
     """
     engine = inf_engine()
     with open(sys.argv[1], 'r') as fd:
         for line in fd:
             tmp = lexing_line(line)
             if tmp:
-                if tmp[0] == '=' and engine.rules and engine.queries is None:
+                if tmp[0] == '=' and engine.queries is None:
                     engine.facts = tmp
-                elif tmp[0] == '?' and engine.rules and engine.facts is not None:
+                elif tmp[0] == '?' and engine.facts is not None:
                     engine.queries = tmp
                 elif tmp[0] != '=' and tmp[0] != '?' and engine.queries is None and\
                         engine.facts is None:
@@ -100,6 +140,4 @@ def read_file():
                         sys.stderr.write("SyntaxError: %s in %s" %(str(to_print), line))
                     except RecursionError:
                         sys.stderr.write("Error: %s must be less complexe" %line)
-                else:
-                    raise Exception("Wrong formatage of file %s" %sys.argv[1])
     return engine

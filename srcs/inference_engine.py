@@ -1,3 +1,5 @@
+import sys
+
 CYCLE = 2
 
 def not_op(left, right):
@@ -102,10 +104,17 @@ class inf_engine():
                 rule.status = CYCLE
         return self.get_final_status_querie(querie)
 
+    def clear_rules(self):
+        for key in self.rules.keys():
+            for rule in self.rules[key]:
+                rule.status = None
+                rule.checked = False
+
     def execute(self):
+        if self.facts is None:
+            self.facts = ['=']
         if self.queries is None:
-            print("missing querie add ?querie")
-            return
+            self.queries = ['?']
         for querie in self.queries[1:]:
             try:
                 state_querie = self.compute_state_querie(querie)
@@ -117,3 +126,6 @@ class inf_engine():
                     print("%c is False" %querie)
             except InferenceError as error_to_print:
                 print("%c is False, %s" %(querie, str(error_to_print)))
+        self.clear_rules()
+        sys.stdout.write('\n')
+

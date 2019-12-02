@@ -1,7 +1,7 @@
-OPERATOR = ('(', ')', '!', '+', '|', '^', '=>', '<=>')
+from inference_engine import dictionnary_of_rules
 
 def check_if_operator(line):
-    for opera in OPERATOR:
+    for opera in dictionnary_of_rules.keys():
         if line.startswith(opera):
             return opera
     return ""
