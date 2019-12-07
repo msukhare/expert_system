@@ -3,6 +3,7 @@ import copy
 from lexer import lexing_line
 from parser import if_parser
 from inference_engine import inf_engine
+from shell import check_if_only_alpha
 
 def swap_assignation(parsed):
     """ This function is called if assignation is <=>, create two new AST
@@ -128,9 +129,15 @@ def read_file():
             tmp = lexing_line(line)
             if tmp:
                 if tmp[0] == '=' and engine.queries is None:
-                    engine.facts = tmp
+                    if check_if_only_alpha(tmp) is True:
+                        engine.facts = tmp
+                    else:
+                        print("Unexcepted cara, only upper case are accepted in %s" %line)
                 elif tmp[0] == '?' and engine.facts is not None:
-                    engine.queries = tmp
+                    if check_if_only_alpha(tmp) is True:
+                        engine.queries = tmp
+                    else:
+                        print("Unexcepted cara, only upper case are accepted in %s" %line)
                 elif tmp[0] != '=' and tmp[0] != '?' and engine.queries is None and\
                         engine.facts is None:
                     try:
