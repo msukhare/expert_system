@@ -19,7 +19,7 @@ def main():
 if __name__ == "__main__":
     ### check number argument, one argument must be present
     if len(sys.argv) != 2:
-        sys.exit("Missing file to analyse.\nUsage: pythonX.X example_input.txt")
+        sys.exit("Missing file to analyse.\nUsage: pythonX.X main.py example_input.txt")
     ### check if file exists
     if os.path.exists(sys.argv[1]) == False:
         sys.exit("%s doesn't exists" %sys.argv[1])
