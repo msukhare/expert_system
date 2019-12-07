@@ -99,7 +99,7 @@ class inf_engine():
                     rule.status = self.compute_conclusion(rule.right) 
                 elif tmp == CYCLE:
                     rule.status = CYCLE
-                rule.checked = False #to delete
+                rule.checked = False
             else:
                 rule.status = CYCLE
         return self.get_final_status_querie(querie)
