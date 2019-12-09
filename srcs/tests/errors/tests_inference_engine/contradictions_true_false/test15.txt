@@ -1,8 +1,0 @@
-K + B => A
-E=>K
-G=>E
-Z=>G
-P=>!Z
-
-=BCZP
-?A
