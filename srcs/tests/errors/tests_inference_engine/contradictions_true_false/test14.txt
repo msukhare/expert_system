@@ -1,0 +1,8 @@
+E + D | C => B
+A=>E
+K=>A
+C=>!K
+K=>R
+
+=KCA
+?KBR
